@@ -1,18 +1,20 @@
-from rest_framework import permissions
-from rest_framework import generics
 from django.contrib.auth import get_user_model
-from .serializers import UserSerializer
 
-class CreateUser(generics.CreateAPIView):
-    model = get_user_model
-    permission_classes = [
-        permissions.AllowAny
-    ]
-    serializer_class = UserSerializer
+from rest_framework import permissions
+from rest_framework import status
+from rest_framework.views import APIView
+from rest_framework.response import Response
 
-class ListUser(generics.ListAPIView):
-    queryset = get_user_model().objects.all()
-    permission_classes = [
-        permissions.IsAuthenticated
-    ]
-    serializer_class = UserSerializer
+from authentication.serializers import UserSerializer
+
+class CreateUser(APIView):
+    """
+    Create a user
+    """
+    def post(self, request):
+        """ Create a User """ 
+        serializer = UserSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(data=serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
