@@ -9,3 +9,10 @@ class CreateUser(generics.CreateAPIView):
         permissions.AllowAny
     ]
     serializer_class = UserSerializer
+
+class ListUser(generics.ListAPIView):
+    model = get_user_model
+    permission_classes = [
+        permissions.IsAuthenticated
+    ]
+    serializer_class = UserSerializer
