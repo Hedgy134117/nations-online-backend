@@ -7,10 +7,17 @@ from rest_framework.response import Response
 
 from authentication.serializers import UserSerializer
 
-class CreateUser(APIView):
+class UserList(APIView):
     """
-    Create a user
+    GET: get all users and info about them
+    POST: Create a new user
     """
+    def get(self, request):
+        """ Get all users """
+        users = get_user_model().objects.all()
+        serializer = UserSerializer(users, many=True)
+        return Response(serializer.data)
+
     def post(self, request):
         """ Create a User """ 
         serializer = UserSerializer(data=request.data)

@@ -11,7 +11,7 @@ from authentication.serializers import UserSerializer
 client = Client()
 CONTENT_TYPE = 'application/json'
 
-class CreateUserTest(TestCase):
+class UserListTest(TestCase):
     def setUp(self):        
         self.userData = json.dumps({
             'username': 'testUser',
@@ -19,5 +19,9 @@ class CreateUserTest(TestCase):
         })
     
     def test_create_user(self):
-        response = client.post(reverse('create-user'), self.userData, CONTENT_TYPE)
+        response = client.post(reverse('user-list'), self.userData, CONTENT_TYPE)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED, 'POST returns no errors')
+    
+    def test_get_users(self):
+        response = client.get(reverse('user-list'))
+        self.assertEqual(response.status_code, status.HTTP_200_OK, 'GET returns no errors')
