@@ -25,6 +25,6 @@ class RegionList(APIView):
     """
     def get(self, request):
         """ Get all regions """
-        regions = Biome.objects.all()
+        regions = Region.objects.all()
         serializer = RegionSerializer(regions, many=True)
         return Response(serializer.data)
