@@ -7,7 +7,7 @@ class BiomeSerializer(serializers.ModelSerializer):
         fields = ['name']
 
 class RegionSerializer(serializers.ModelSerializer):
-    biome = serializers.StringRelatedField(many=True)
+    biome = serializers.StringRelatedField(many=False)
 
     class Meta:
         model = Region
