@@ -55,27 +55,27 @@ class GovernmentBoost(models.Model):
 
 class Nation(models.Model):
     name = models.CharField(max_length=254)
-    owner = models.ForeignKey('authentication.User', models.CASCADE)
+    owner = models.ForeignKey('authentication.User', models.CASCADE, default='')
     region = models.ForeignKey('nations.Region', models.CASCADE)
-    government = models.ForeignKey('nations.Government', models.CASCADE)
-    population = models.FloatField()
+    government = models.ForeignKey('nations.Government', models.CASCADE, default=1)
+    population = models.FloatField(default=0)
 
     # Resources
-    food = models.FloatField()
-    iron = models.FloatField()
-    aluminum = models.FloatField()
-    steel = models.FloatField()
-    wood = models.FloatField()
-    rawUranium = models.FloatField()
-    enrichedUranium = models.FloatField()
-    oil = models.FloatField()
+    food = models.FloatField(default=0)
+    iron = models.FloatField(default=0)
+    aluminum = models.FloatField(default=0)
+    steel = models.FloatField(default=0)
+    wood = models.FloatField(default=0)
+    rawUranium = models.FloatField(default=0)
+    enrichedUranium = models.FloatField(default=0)
+    oil = models.FloatField(default=0)
 
     # Other resources
-    construction = models.FloatField()
-    research = models.FloatField()
-    happiness = models.FloatField()
-    crime = models.FloatField()
-    military = models.FloatField()
+    construction = models.FloatField(default=0)
+    research = models.FloatField(default=0)
+    happiness = models.FloatField(default=0)
+    crime = models.FloatField(default=0)
+    military = models.FloatField(default=0)
 
     def grow_population(self):
         self.population = self.population * math.exp(self.government.populationRate)
