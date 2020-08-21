@@ -18,6 +18,9 @@ class Government(models.Model):
     name = models.CharField(max_length=100, default='')
     populationRate = models.FloatField()
 
+    def __str__(self):
+        return self.name
+
 class GovernmentBoost(models.Model):
     choices = [
         ('construction', 'Construction'),
