@@ -1,15 +1,18 @@
 from rest_framework import serializers
 from .models import *
 
-class BiomeSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Biome
-        fields = ['name']
-
 class BiomeBoostSerializer(serializers.ModelSerializer):
     class Meta:
         model = BiomeBoost
-        fields = '__all__'
+        fields = ['resource', 'percentage']
+
+class BiomeSerializer(serializers.ModelSerializer):
+    boosts = BiomeBoostSerializer(many=True, read_only=True, source='biomeboost_set')
+
+    class Meta:
+        model = Biome
+        fields = ['name', 'boosts']
+
 
 class RegionSerializer(serializers.ModelSerializer):
     biome = serializers.StringRelatedField(many=False)
