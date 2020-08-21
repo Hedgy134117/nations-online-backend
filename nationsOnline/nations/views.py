@@ -5,8 +5,8 @@ from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
 
-from nations.models import Biome, Region
-from nations.serializers import BiomeSerializer, RegionSerializer
+from nations.models import *
+from nations.serializers import *
 
 # Create your views here.
 class BiomeList(APIView):
@@ -27,4 +27,14 @@ class RegionList(APIView):
         """ Get all regions """
         regions = Region.objects.all()
         serializer = RegionSerializer(regions, many=True)
+        return Response(serializer.data)
+
+class GovernmentList(APIView):
+    """
+    GET: Get a list of governments
+    """
+    def get(self, request):
+        """ Get all governments """
+        governments = Government.objects.all()
+        serializer = GovernmentSerializer(governments, many=True)
         return Response(serializer.data)
