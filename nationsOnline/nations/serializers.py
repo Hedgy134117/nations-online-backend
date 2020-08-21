@@ -21,15 +21,18 @@ class RegionSerializer(serializers.ModelSerializer):
         model = Region
         fields = ['biome', 'name']
 
-class GovernmentSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Government
-        fields = '__all__'
-
 class GovernmentBoostSerializer(serializers.ModelSerializer):
     class Meta:
         model = GovernmentBoost
-        fields = '__all__'
+        fields = ['resource', 'percentage']
+
+class GovernmentSerializer(serializers.ModelSerializer):
+    boosts = GovernmentBoostSerializer(many=True, read_only=True, source='governmentboost_set')
+
+    class Meta:
+        model = Government
+        fields = ['name', 'populationRate', 'boosts']
+
 
 class NationSerializer(serializers.ModelSerializer):
     class Meta:
