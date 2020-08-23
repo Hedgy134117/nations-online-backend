@@ -23,6 +23,9 @@ class BiomeBoost(models.Model):
     resource = models.CharField(max_length=100, choices=choices)
     percentage = models.FloatField()
 
+    def __str__(self):
+        return f'{self.biome.name} {self.resource} {self.percentage * 100}%'
+
 class Region(models.Model):
     biome = models.ForeignKey('nations.Biome', models.CASCADE)
     name = models.CharField(max_length=254)
@@ -79,6 +82,9 @@ class Nation(models.Model):
 
     def grow_population(self):
         self.population = self.population * math.exp(self.government.populationRate)
+    
+    def __str__(self):
+        return self.name
 
 class ResourceBoost(models.Model):
     choices = [
