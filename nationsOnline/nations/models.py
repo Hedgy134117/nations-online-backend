@@ -63,6 +63,9 @@ class GovernmentBoost(models.Model):
 class TroopInfo(models.Model):
     name = models.CharField(max_length=254)
 
+    def __str__(self):
+        return self.name
+
 class Troop(models.Model):
     info = models.ForeignKey('nations.TroopInfo', models.CASCADE)
 
