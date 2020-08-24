@@ -119,7 +119,7 @@ class MilitaryBuilding(Building):
 
 class Nation(models.Model):
     name = models.CharField(max_length=254)
-    owner = models.ForeignKey('authentication.User', models.CASCADE, default='')
+    owner = models.ForeignKey('authentication.User', models.CASCADE, default='', related_name='nation')
     region = models.ForeignKey('nations.Region', models.CASCADE)
     government = models.ForeignKey('nations.Government', models.CASCADE, default=1)
     population = models.FloatField(default=0)
