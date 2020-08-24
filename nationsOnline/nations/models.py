@@ -1,6 +1,26 @@
 from django.db import models
 import math
 
+resourceChoices = [
+    ('food', 'Food'),
+    ('iron', 'Iron'),
+    ('aluminum', 'Aluminum'),
+    ('steel', 'Steel'),
+    ('wood', 'Wood'),
+    ('rawUranium', 'Raw Uranium'),
+    ('enrichedUranium', 'Enriched Uranium'),
+    ('oil', 'Oil'),
+]
+boostChoices = [
+    ('construction', 'Construction'),
+    ('research', 'Research'),
+    ('happiness', 'Happiness'),
+    ('crime', 'Crime'),
+    ('military', 'Military'),
+]
+
+# ---------- MAP ---------- # 
+
 class Biome(models.Model):
     name = models.CharField(max_length=254)
     
@@ -8,19 +28,8 @@ class Biome(models.Model):
         return self.name
 
 class BiomeBoost(models.Model):
-    choices = [
-        ('food', 'Food'),
-        ('iron', 'Iron'),
-        ('aluminum', 'Aluminum'),
-        ('steel', 'Steel'),
-        ('wood', 'Wood'),
-        ('rawUranium', 'Raw Uranium'),
-        ('enrichedUranium', 'Enriched Uranium'),
-        ('oil', 'Oil'),
-    ]
-
     biome = models.ForeignKey('nations.Biome', models.CASCADE)
-    resource = models.CharField(max_length=100, choices=choices)
+    resource = models.CharField(max_length=100, choices=resourceChoices)
     percentage = models.FloatField()
 
     def __str__(self):
@@ -33,6 +42,8 @@ class Region(models.Model):
     def __str__(self):
         return self.name
 
+# ---------- GOVERNMENT ---------- # 
+
 class Government(models.Model):
     name = models.CharField(max_length=100, default='')
     populationRate = models.FloatField()
@@ -41,20 +52,67 @@ class Government(models.Model):
         return self.name
 
 class GovernmentBoost(models.Model):
-    choices = [
-        ('construction', 'Construction'),
-        ('research', 'Research'),
-        ('happiness', 'Happiness'),
-        ('crime', 'Crime'),
-        ('military', 'Military'),
-    ]
-
     government = models.ForeignKey('nations.Government', models.CASCADE)
-    resource = models.CharField(max_length=100, choices=choices)
+    resource = models.CharField(max_length=100, choices=boostChoices)
     percentage = models.FloatField()
 
     def __str__(self):
         return f'{self.government.name} {self.resource} {self.percentage * 100}%'
+
+# ---------- MILITARY ---------- #
+class TroopInfo(models.Model):
+    name = models.CharField(max_length=254)
+
+class Troop(models.Model):
+    info = models.ForeignKey('nations.TroopInfo', models.CASCADE)
+
+# ---------- BUILDING ---------- #
+ 
+class BuildingInfo(models.Model):
+    name = models.CharField(max_length=254)
+    desc = models.TextField()
+
+    # Resources
+    foodCost = models.IntegerField(default=0)
+    ironCost = models.IntegerField(default=0)
+    aluminumCost = models.IntegerField(default=0)
+    steelCost = models.IntegerField(default=0)
+    woodCost = models.IntegerField(default=0)
+    rawUraniumCost = models.IntegerField(default=0)
+    enrichedUraniumCost = models.IntegerField(default=0)
+    oilCost = models.IntegerField(default=0)
+
+    constructionTime = models.IntegerField(verbose_name='Construction Time (in hours)')
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        abstract = True
+
+class ResourceBuildingInfo(BuildingInfo):
+    resource = models.CharField(verbose_name='Producing Resource', max_length=254, choices=resourceChoices)
+    rpc = models.IntegerField()
+
+class MilitaryBuildingInfo(BuildingInfo):
+    troop = models.ForeignKey('nations.Troop', models.CASCADE)
+    housing = models.IntegerField()
+
+class Building(models.Model):
+    nation = models.ForeignKey('nations.Nation', models.CASCADE)
+    startedBuildingTime = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        abstract = True
+
+class ResourceBuilding(Building):
+    info = models.ForeignKey('nations.ResourceBuildingInfo', models.CASCADE)
+    lastLoad = models.DateTimeField(auto_now=True)
+
+class MilitaryBuilding(Building):
+    info = models.ForeignKey('nations.MilitaryBuildingInfo', models.CASCADE)
+
+# ---------- NATION ---------- # 
 
 class Nation(models.Model):
     name = models.CharField(max_length=254)
@@ -87,19 +145,8 @@ class Nation(models.Model):
         return self.name
 
 class ResourceBoost(models.Model):
-    choices = [
-        ('food', 'Food'),
-        ('iron', 'Iron'),
-        ('aluminum', 'Aluminum'),
-        ('steel', 'Steel'),
-        ('wood', 'Wood'),
-        ('rawUranium', 'Raw Uranium'),
-        ('enrichedUranium', 'Enriched Uranium'),
-        ('oil', 'Oil'),
-    ]
-
     nation = models.ForeignKey('nations.Nation', models.CASCADE)
-    resource = models.CharField(max_length=100, choices=choices)
+    resource = models.CharField(max_length=100, choices=resourceChoices)
     percentage = models.FloatField()
 
     def __str__(self):
