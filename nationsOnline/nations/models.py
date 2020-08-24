@@ -98,7 +98,7 @@ class ResourceBuildingInfo(BuildingInfo):
     rpc = models.IntegerField()
 
 class MilitaryBuildingInfo(BuildingInfo):
-    troop = models.ForeignKey('nations.Troop', models.CASCADE)
+    troop = models.ForeignKey('nations.TroopInfo', models.CASCADE)
     housing = models.IntegerField()
 
 class Building(models.Model):
