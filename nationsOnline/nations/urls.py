@@ -13,4 +13,5 @@ urlpatterns = [
 
     path('nations/', views.NationList.as_view(), name='nation-list'),
     path('nations/<int:pk>/', views.NationDetail.as_view(), name='nation-detail'),
+    path('nations/<int:pk>/buildings/', views.NationBuildings.as_view(), name='nation-buildings'),
 ]

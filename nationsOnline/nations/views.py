@@ -110,3 +110,52 @@ class NationDetail(APIView):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors)
+
+class NationBuildings(APIView):
+    """
+    GET: get all of the nation's buildings
+    POST: add a new building to the nation
+    """
+    # allow get without auth, but post needs auth
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+
+    def get_nation(self, pk):
+        try:
+            return Nation.objects.get(id=pk)
+        except:
+            return Http404
+        
+    def get_buildings(self, nation):
+        return [nation.resourcebuilding_set, nation.militarybuilding_set]
+
+    def get(self, request, pk):
+        """ Get a nation's buildings """
+        nation = self.get_nation(pk=pk)
+        buildings = self.get_buildings(nation)
+        print(buildings)
+        rSerializer = ResourceBuildingSerializer(buildings[0], many=True)
+        mSerializer = MilitaryBuildingSerializer(buildings[1], many=True)
+        response = {
+            'resourceBuildings': rSerializer.data,
+            'militaryBuildings': mSerializer.data,
+        }
+        return Response(response)
+    
+    def post(self, request, pk):
+        """ Add a building to a nation """
+        nation = self.get_nation(pk=pk)
+        if nation.owner != request.user:
+            return Response(status=status.HTTP_401_UNAUTHORIZED)
+        
+        try:
+            if request.data['type'] == 'resource':
+                serializer = ResourceBuildingSerializer(data=request.data)
+            elif request.data['type'] == 'military':
+                serializer = MilitaryBuildingSerializer(data=request.data)
+        except:
+            return Response({'type': "This field is required. Either 'resource' or 'military'"}, status.HTTP_400_BAD_REQUEST)
+
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status.HTTP_201_CREATED)
+        return Response(serializer.errors, status.HTTP_400_BAD_REQUEST)

@@ -14,3 +14,4 @@ admin.site.register(models.ResourceBuildingInfo)
 admin.site.register(models.MilitaryBuildingInfo)
 
 admin.site.register(models.Region)
+admin.site.register(models.Nation)
